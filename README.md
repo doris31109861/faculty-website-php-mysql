@@ -47,7 +47,9 @@ db.php               # prepared statement 共用函式 db_run()、HTML 跳脫 h(
 schema.sql           # 建表語法（6 張內容表＋admin）
 tools/create_admin.php  # 建立管理員帳號（命令列）
 background.php       # 後台首頁
-bg_php/<資料表>/     # 每張表的 bg_ / insert_ / select_ / update_ / delete_ 頁面
+bg_php/crud.php      # 6 張表共用的新增／修改／刪除邏輯（依設定表組出 SQL）
+bg_php/<資料表>/     # 每張表的 bg_ / select_ 頁面，以及呼叫 crud.php 的 insert_ / update_ / delete_
+tests/               # PHP + MySQL 整合測試（GitHub Actions 自動執行）
 config.example.php   # 資料庫設定範本
 ```
 

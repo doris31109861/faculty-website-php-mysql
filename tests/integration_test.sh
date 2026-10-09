@@ -78,7 +78,27 @@ done
 role=$(mysql -N -h 127.0.0.1 -u root -p"$DB_ROOT_PASS" "$DB_NAME" -e "SELECT Role FROM PLAN")
 [[ "$role" == PI ]] && pass "PLAN.Role 沒有多餘的前導空白" || fail "PLAN.Role='$role'"
 
-# 10) 登出後再也進不了後台
+# 10) 其他表的修改／刪除：涵蓋兩個 key（TIME、EXPERIENCE）與單一 key（PAPER）
+curl -s -o /dev/null -b "$JAR" -d "day1=Monday&class1=3&day=Tuesday&class=5&class_name=DB2" "$BASE/bg_php/time/update_time.php"
+v=$(mysql -N -h 127.0.0.1 -u root -p"$DB_ROOT_PASS" "$DB_NAME" -e "SELECT CONCAT(Day,'/',Class,'/',Class_name) FROM TIME")
+[[ "$v" == "Tuesday/5/DB2" ]] && pass "TIME 修改成功" || fail "TIME 修改：$v"
+curl -s -o /dev/null -b "$JAR" -d "department1=CSIE&position1=Professor&department=EE&position=Chair&type=1" "$BASE/bg_php/experience/update_experience.php"
+v=$(mysql -N -h 127.0.0.1 -u root -p"$DB_ROOT_PASS" "$DB_NAME" -e "SELECT CONCAT(Department,'/',Position,'/',Type) FROM EXPERIENCE")
+[[ "$v" == "EE/Chair/1" ]] && pass "EXPERIENCE 修改成功" || fail "EXPERIENCE 修改：$v"
+curl -s -o /dev/null -b "$JAR" -d "name1=Paper1&name=Paper2&teacher=Lee&date=2024&page=9&source=ACM&type=1&num=4&place=Tainan" "$BASE/bg_php/paper/update_paper.php"
+v=$(mysql -N -h 127.0.0.1 -u root -p"$DB_ROOT_PASS" "$DB_NAME" -e "SELECT CONCAT(Name,'/',Source,'/',Place) FROM PAPER")
+[[ "$v" == "Paper2/ACM/Tainan" ]] && pass "PAPER 修改成功" || fail "PAPER 修改：$v"
+curl -s -o /dev/null -b "$JAR" -d "day=Tuesday&class=5" "$BASE/bg_php/time/delete_time.php"
+curl -s -o /dev/null -b "$JAR" -d "department=EE&position=Chair" "$BASE/bg_php/experience/delete_experience.php"
+curl -s -o /dev/null -b "$JAR" -d "name=Paper2" "$BASE/bg_php/paper/delete_paper.php"
+curl -s -o /dev/null -b "$JAR" -d "name=Book1&type=0" "$BASE/bg_php/book/delete_book.php"
+curl -s -o /dev/null -b "$JAR" -d "name=Plan1" "$BASE/bg_php/plan/delete_plan.php"
+for t in TIME EXPERIENCE PAPER BOOK PLAN; do
+    c=$(mysql -N -h 127.0.0.1 -u root -p"$DB_ROOT_PASS" "$DB_NAME" -e "SELECT COUNT(*) FROM $t")
+    [[ "$c" == 0 ]] && pass "$t 刪除成功" || fail "$t 刪除：count=$c"
+done
+
+# 11) 登出後再也進不了後台
 curl -s -o /dev/null -b "$JAR" -c "$JAR" "$BASE/logout.php"
 r=$(status_and_location "$BASE/background.php")
 [[ "$r" == 302*enter.php ]] && pass "登出後後台被保護" || fail "登出後：$r"
