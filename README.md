@@ -29,7 +29,7 @@
 
 ### 安裝與執行
 
-1. 建立 MySQL 資料庫與上述 6 張資料表，並匯入 `schema.sql` 建立 `admin` 資料表
+1. 建立 MySQL 資料庫，匯入 `schema.sql`：`mysql -u <user> -p <database> < schema.sql`（建立 6 張內容表與 `admin` 表）
 2. 將 `config.example.php` 複製成 `config.php`，填入自己的資料庫帳密（`config.php` 已列入 `.gitignore`，不會上傳）
 3. 建立後台帳號：`php tools/create_admin.php <帳號> <密碼>`（只會存入密碼雜湊）
 4. 用 Apache + PHP（例如 XAMPP）開啟 `index.php`
@@ -41,7 +41,7 @@ index.php            # 前台
 enter.php            # 後台登入頁
 login.php / logout.php  # 登入驗證（password_verify + session）／登出
 auth.php             # 後台頁面共用的登入檢查
-schema.sql           # 建表語法
+schema.sql           # 建表語法（6 張內容表＋admin）
 tools/create_admin.php  # 建立管理員帳號（命令列）
 background.php       # 後台首頁
 bg_php/<資料表>/     # 每張表的 bg_ / insert_ / select_ / update_ / delete_ 頁面
@@ -69,7 +69,7 @@ A rebuild of a CSIE professor's profile website, backed by MySQL, with an admin 
 
 ### Setup
 
-1. Create a MySQL database and the six tables, and import `schema.sql` for the `admin` table.
+1. Create a MySQL database and import `schema.sql` (six content tables plus `admin`): `mysql -u <user> -p <database> < schema.sql`.
 2. Copy `config.example.php` to `config.php` and fill in your credentials (`config.php` is git-ignored).
 3. Create an admin account: `php tools/create_admin.php <user> <password>` (only the hash is stored).
 4. Serve the folder with Apache/PHP (e.g. XAMPP) and open `index.php`.
