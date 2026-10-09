@@ -4,6 +4,8 @@
 
 [中文](#中文) | [English](#english)
 
+![網站與後台操作畫面 / Site and admin demo](docs/demo.gif)
+
 ---
 
 ## 中文

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-09 — README 加入操作畫面 GIF
+
+- **內容**：從期末專題錄影（2023-05-29）擷取前台各區塊與後台時間表維護畫面，做成 `docs/demo.gif`（800px、8fps、約 450KB），放在 README 開頭。已裁掉瀏覽器網址列與工作列，並避開顯示學校伺服器 IP 與登入帳號的片段。
+- **原因**：讓 README 一打開就看得到網站實際畫面。
+- **測試**：逐格檢查 GIF，確認沒有網址、IP 或帳號資訊。
+
 ## 2026-10-09 — SQL 改用 prepared statements
 
 - **內容**：新增 `db.php`（`db_run($link, $sql, $params)`：`mysqli_prepare` + `bind_param` + `execute`；`h()`：HTML 跳脫）。`bg_php/` 下 24 個新增／查詢／修改／刪除頁面的 SQL 全部改成 `?` 佔位符，移除 `mysqli_real_escape_string` 字串拼接；查詢頁輸出資料時加上 `h()` 防 XSS。`insert_plan.php` 原本 Role 值前面多一個空白（`' $role'`），改用佔位符後一併修正。
