@@ -36,6 +36,14 @@
 3. 建立後台帳號：`php tools/create_admin.php <帳號> <密碼>`（只會存入密碼雜湊）
 4. 用 Apache + PHP（例如 XAMPP）開啟 `index.php`
 
+### 用 Docker 一鍵啟動
+
+```bash
+docker compose up -d --build                       # PHP 8.2 + Apache + MySQL 8，第一次啟動自動匯入 schema.sql
+docker compose exec web php tools/create_admin.php <帳號> <密碼>
+# 開啟 http://localhost:8080（資料庫密碼可用環境變數 DB_PASS 設定）
+```
+
 ### 專案結構
 
 ```
@@ -78,6 +86,10 @@ A rebuild of a CSIE professor's profile website, backed by MySQL, with an admin 
 2. Copy `config.example.php` to `config.php` and fill in your credentials (`config.php` is git-ignored).
 3. Create an admin account: `php tools/create_admin.php <user> <password>` (only the hash is stored).
 4. Serve the folder with Apache/PHP (e.g. XAMPP) and open `index.php`.
+
+### Run with Docker
+
+`docker compose up -d --build` starts PHP 8.2 + Apache and MySQL 8 (the schema is imported on first start). Create an admin with `docker compose exec web php tools/create_admin.php <user> <password>` and open http://localhost:8080.
 
 ### What I learned
 

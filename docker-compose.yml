@@ -1,0 +1,33 @@
+# 一鍵啟動：docker compose up -d，然後開 http://localhost:8080
+# 建立後台帳號：docker compose exec web php tools/create_admin.php <帳號> <密碼>
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: faculty
+      MYSQL_USER: faculty
+      MYSQL_PASSWORD: ${DB_PASS:-change-me}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro   # 第一次啟動時自動建表
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 5s
+      retries: 20
+
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_USER: faculty
+      DB_PASS: ${DB_PASS:-change-me}
+      DB_NAME: faculty
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

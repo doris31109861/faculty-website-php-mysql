@@ -1,16 +1,22 @@
 # Changelog
 
+## 2026-10-09 — Docker Compose 一鍵啟動
+
+- **內容**：新增 `Dockerfile`（PHP 8.2 + Apache + mysqli）、`docker-compose.yml`（web + MySQL 8，第一次啟動自動匯入 `schema.sql`）、`docker/config.docker.php`（從環境變數讀資料庫設定）、`.dockerignore`；README 加上使用方式。CI 新增 docker-compose 工作：啟動整套服務、建立管理員、確認首頁 200 與登入成功。
+- **原因**：不用另外安裝 XAMPP 也能跑起來。
+- **測試**：由 CI 驗證（見下一筆紀錄）。
+
 ## 2026-10-09 — 新增／修改／刪除抽成共用函式
 
 - **內容**：新增 `bg_php/crud.php`：以 `$CRUD_TABLES` 描述 6 張表的欄位與 key，`crud_build()` 依動作組出 SQL 與參數、`crud_handle()` 執行並轉址。18 個 `insert_`／`update_`／`delete_` 頁面各縮成 3 行（共刪除約 450 行重複程式）。整合測試加入 TIME、EXPERIENCE、PAPER 的修改與 5 張表的刪除。
 - **原因**：6 張表的 CRUD 幾乎一樣，抽成共用函式後新增資料表只要加一行設定。
-- **測試**：見 CI 整合測試結果（下一筆紀錄）。
+- **測試**：CI 整合測試 27 項全部通過。
 
 ## 2026-10-09 — 加入 PHP + MySQL 整合測試（GitHub Actions）
 
 - **內容**：新增 `tests/integration_test.sh` 與 `.github/workflows/integration.yml`：CI 啟動 MySQL 8 與 PHP 8.2，匯入 `schema.sql`、建立測試管理員，再用 curl 實際操作網站：未登入被導回、錯誤密碼被拒、正確密碼登入、新增含單引號與 SQL 片段的資料、查詢頁輸出跳脫、修改、前台顯示、刪除、其餘 5 張表各新增一筆、登出後後台受保護；另對所有 `.php` 做 `php -l` 語法檢查。
 - **原因**：此電腦沒有 PHP／MySQL，先前的登入、schema、prepared statement 修改都還沒實際執行過。
-- **測試**：CI 實跑 21 項全部通過（含先前未能在本機測試的登入、schema、prepared statement 修改）。
+- **測試**：CI 實跑 19 項全部通過（含先前未能在本機測試的登入、schema、prepared statement 修改）。
 
 ## 2026-10-09 — README 加入操作畫面 GIF
 
