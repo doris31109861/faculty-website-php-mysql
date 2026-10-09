@@ -1,3 +1,13 @@
+<?php
+// 後台登入頁：啟動 session 以讀取 login.php 留下的錯誤訊息；已登入就直接進後台
+require_once __DIR__ . '/session.php';
+if (!empty($_SESSION['admin_id'])) {
+    header('Location: background.php');
+    exit;
+}
+$error = $_SESSION['login_error'] ?? '';
+unset($_SESSION['login_error']);  // 錯誤訊息只顯示一次
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -250,18 +260,22 @@
 			<h1>李榮三後台管理</h1>
 			<div class="inset">
 				<!--start-main-->
-				<form>
+				<!-- 以 POST 送到 login.php 驗證帳密（原本只是直接跳轉到後台） -->
+				<form action="login.php" method="post">
 			         <div>
 			         	<h2>管理員登入</h2>
 						<span><label>帳號</label></span>
-						<span><input type="text" class="textbox" ></span>
+						<span><input type="text" class="textbox" name="username" required autocomplete="username"></span>
 					 </div>
 					 <div>
 						<span><label>密碼</label></span>
-					    <span><input type="password" class="password"></span>
+					    <span><input type="password" class="password" name="password" required autocomplete="current-password"></span>
 					 </div>
 					<div class="sign">
-                        <input type="button" value="登入" class="submit" onclick="location.href='background.php'">
+                        <?php if ($error !== ''): ?>
+                        <p style="color:#c00; margin-bottom:10px;"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p>
+                        <?php endif; ?>
+                        <input type="submit" value="登入" class="submit">
 					</div>
 					<a href="index.php" id="front">前台網頁</a>
 				</form>

@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../config.php'; ?><!DOCTYPE html>
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />

@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/auth.php'; // 未登入會被導回 enter.php ?>
 <html>
 	<head>
 		<meta charset="utf-8" />
@@ -42,6 +43,7 @@
 		<a href="bg_php/book/bg_book.php">書本表維護</a>
 		<a href="bg_php/plan/bg_plan.php">計畫表維護</a>
 		<a href="bg_php/award/bg_award.php">獎項表維護</a>
-		<a href="enter.php" id="back">返回</a>
+		<a href="index.php" id="back">返回前台</a>
+		<a href="logout.php">登出</a>
 	</body>
 </html>

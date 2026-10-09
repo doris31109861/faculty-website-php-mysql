@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../config.php'; ?><?php
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php
 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 ?>
 
