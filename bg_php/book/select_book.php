@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><!DOCTYPE html>
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php require_once __DIR__ . '/../../db.php'; ?><!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -76,10 +76,10 @@
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-                $name1 = mysqli_real_escape_string($link, $_POST["name1"]);
-                $type1 = mysqli_real_escape_string($link, $_POST["type1"]);
-                $sql = "SELECT * FROM BOOK WHERE Name='$name1' AND Type='$type1'";
-                $result = mysqli_query($link, $sql);
+                $name1 = ($_POST["name1"] ?? '');
+                $type1 = ($_POST["type1"] ?? '');
+                $sql = "SELECT * FROM BOOK WHERE Name=? AND Type=?";  // ? 為佔位符，實際的值由 db_run 綁定
+                $result = db_run($link, $sql, [$name1, $type1]);
 
                 if (mysqli_num_rows($result) > 0) {
                     echo "<table>";
@@ -94,12 +94,12 @@
 
                     while($row = mysqli_fetch_array($result)){
                         echo "<tr>";
-                        echo "<td>" . $row["Name"] . "</td>";
-                        echo "<td>" . $row["Press"] . "</td>";
-                        echo "<td>" . $row["Type"] . "</td>";
-                        echo "<td>" . $row["Nation"] . "</td>";
-                        echo "<td>" . $row["Date"] . "</td>";
-                        echo "<td>" . $row["Teacher"] . "</td>";
+                        echo "<td>" . h($row["Name"]) . "</td>";
+                        echo "<td>" . h($row["Press"]) . "</td>";
+                        echo "<td>" . h($row["Type"]) . "</td>";
+                        echo "<td>" . h($row["Nation"]) . "</td>";
+                        echo "<td>" . h($row["Date"]) . "</td>";
+                        echo "<td>" . h($row["Teacher"]) . "</td>";
                         echo "</tr>";
                         $press1 = $row["Press"] ;
                         $nation1 = $row["Nation"] ;
@@ -117,22 +117,22 @@
 
             <form action="update_book.php" method="post">
             <label for="name">修改後書名:</label>
-                <input type="hidden" id="name1" name="name1" value="<?php echo isset($name1) ? $name1 : ''; ?>">
-                <input type="hidden" id="type1" name="type1" value="<?php echo isset($type1) ? $type1 : ''; ?>">
-                <input type="text" id="name" name="name" value="<?php echo isset($name1) ? $name1 : ''; ?>">
+                <input type="hidden" id="name1" name="name1" value="<?php echo isset($name1) ? h($name1) : ''; ?>">
+                <input type="hidden" id="type1" name="type1" value="<?php echo isset($type1) ? h($type1) : ''; ?>">
+                <input type="text" id="name" name="name" value="<?php echo isset($name1) ? h($name1) : ''; ?>">
 
                 <label for="press">修改後出版社:</label>
-                <input type="text" id="press" name="press" value="<?php echo isset($press1) ? $press1 : ''; ?>">
+                <input type="text" id="press" name="press" value="<?php echo isset($press1) ? h($press1) : ''; ?>">
 
                 <label for="type">修改後教材0/專書1:</label>
-                <input type="text" id="type" name="type" value="<?php echo isset($type1) ? $type1 : ''; ?>">
+                <input type="text" id="type" name="type" value="<?php echo isset($type1) ? h($type1) : ''; ?>">
 
                 <label for="nation">修改後國家:</label>
-                <input type="text" id="nation" name="nation" value="<?php echo isset($nation1) ? $nation1 : ''; ?>">
+                <input type="text" id="nation" name="nation" value="<?php echo isset($nation1) ? h($nation1) : ''; ?>">
                 <label for="date">修改後日期:</label>
-                <input type="text" id="date" name="date" value="<?php echo isset($date1) ? $date1 : ''; ?>">
+                <input type="text" id="date" name="date" value="<?php echo isset($date1) ? h($date1) : ''; ?>">
                 <label for="teacher">修改後教授:</label>
-                <input type="text" id="teacher" name="teacher" value="<?php echo isset($teacher1) ? $teacher1 : ''; ?>">
+                <input type="text" id="teacher" name="teacher" value="<?php echo isset($teacher1) ? h($teacher1) : ''; ?>">
                 <input type="submit" value="Update">
             </form>
         </div>

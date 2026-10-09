@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><!DOCTYPE html>
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php require_once __DIR__ . '/../../db.php'; ?><!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -76,10 +76,10 @@
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-                $day1 = mysqli_real_escape_string($link, $_POST["day1"]);
-                $class1 = mysqli_real_escape_string($link, $_POST["class1"]);
-                $sql = "SELECT * FROM TIME WHERE Day='$day1' AND Class='$class1'";
-                $result = mysqli_query($link, $sql);
+                $day1 = ($_POST["day1"] ?? '');
+                $class1 = ($_POST["class1"] ?? '');
+                $sql = "SELECT * FROM TIME WHERE Day=? AND Class=?";  // ? 為佔位符，實際的值由 db_run 綁定
+                $result = db_run($link, $sql, [$day1, $class1]);
 
                 if (mysqli_num_rows($result) > 0) {
                     echo "<table>";
@@ -91,9 +91,9 @@
 
                     while ($row = mysqli_fetch_array($result)) {
                         echo "<tr>";
-                        echo "<td>" . $row["Day"] . "</td>";
-                        echo "<td>" . $row["Class"] . "</td>";
-                        echo "<td>" . $row["Class_name"] . "</td>";
+                        echo "<td>" . h($row["Day"]) . "</td>";
+                        echo "<td>" . h($row["Class"]) . "</td>";
+                        echo "<td>" . h($row["Class_name"]) . "</td>";
                         echo "</tr>";
                         $class_name = $row["Class_name"] ;
                     }
@@ -108,16 +108,16 @@
             ?>
 
             <form action="update_time.php" method="post">
-                <input type="hidden" id="day1" name="day1" value="<?php echo isset($day1) ? $day1 : ''; ?>">
-                <input type="hidden" id="class1" name="class1" value="<?php echo isset($class1) ? $class1 : ''; ?>">
+                <input type="hidden" id="day1" name="day1" value="<?php echo isset($day1) ? h($day1) : ''; ?>">
+                <input type="hidden" id="class1" name="class1" value="<?php echo isset($class1) ? h($class1) : ''; ?>">
                 <label for="day">修改後星期:</label>
-                <input type="text" id="day" name="day" value="<?php echo isset($day1) ? $day1 : ''; ?>">
+                <input type="text" id="day" name="day" value="<?php echo isset($day1) ? h($day1) : ''; ?>">
 
                 <label for="class">修改後節次:</label>
-                <input type="text" id="class" name="class" value="<?php echo isset($class1) ? $class1 : ''; ?>">
+                <input type="text" id="class" name="class" value="<?php echo isset($class1) ? h($class1) : ''; ?>">
 
                 <label for="class_name">修改後課名:</label>
-                <input type="text" id="class_name" name="class_name" value="<?php echo isset($class_name) ? $class_name : ''; ?>">
+                <input type="text" id="class_name" name="class_name" value="<?php echo isset($class_name) ? h($class_name) : ''; ?>">
 
                 <input type="submit" value="Update">
             </form>

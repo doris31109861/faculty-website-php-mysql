@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><!DOCTYPE html>
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php require_once __DIR__ . '/../../db.php'; ?><!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -76,11 +76,11 @@
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-                $department1 = mysqli_real_escape_string($link, $_POST["department1"]);
-                $position1 = mysqli_real_escape_string($link, $_POST["position1"]);
-                $type = mysqli_real_escape_string($link, $_POST["type"]);
-                $sql = "SELECT * FROM EXPERIENCE WHERE Position='$position1' AND Department='$department1' ";
-                $result = mysqli_query($link, $sql);
+                $department1 = ($_POST["department1"] ?? '');
+                $position1 = ($_POST["position1"] ?? '');
+                $type = ($_POST["type"] ?? '');
+                $sql = "SELECT * FROM EXPERIENCE WHERE Position=? AND Department=?";  // ? 為佔位符，實際的值由 db_run 綁定
+                $result = db_run($link, $sql, [$position1, $department1]);
                 if (mysqli_num_rows($result) > 0) {
                     echo "<table>";
                     echo "<tr>";
@@ -91,9 +91,9 @@
 
                     while ($row = mysqli_fetch_array($result)) {
                         echo "<tr>";
-                        echo "<td>" . $row["Department"] . "</td>";
-                        echo "<td>" . $row["Position"] . "</td>";
-                        echo "<td>" . $row["Type"] . "</td>";
+                        echo "<td>" . h($row["Department"]) . "</td>";
+                        echo "<td>" . h($row["Position"]) . "</td>";
+                        echo "<td>" . h($row["Type"]) . "</td>";
                         echo "</tr>";
                         $type1 = $row["Type"] ;
                     }
@@ -108,12 +108,12 @@
             ?>
 
             <form action="update_experience.php" method="post">
-                <input type="hidden" id="position1" name="position1" value="<?php echo isset($position1) ? $position1 : ''; ?>">
-                <input type="hidden" id="department1" name="department1" value="<?php echo isset($department1) ? $department1 : ''; ?>">
+                <input type="hidden" id="position1" name="position1" value="<?php echo isset($position1) ? h($position1) : ''; ?>">
+                <input type="hidden" id="department1" name="department1" value="<?php echo isset($department1) ? h($department1) : ''; ?>">
                 <label for="department">修改後部門:</label>
-                <input type="text" id="department" name="department" value="<?php echo isset($department1) ? $department1 : ''; ?>">
+                <input type="text" id="department" name="department" value="<?php echo isset($department1) ? h($department1) : ''; ?>">
                 <label for="position">修改後職位:</label>
-                <input type="text" id="position" name="position" value="<?php echo isset($position1) ? $position1 : ''; ?>">
+                <input type="text" id="position" name="position" value="<?php echo isset($position1) ? h($position1) : ''; ?>">
                 <label for="type">修改後校內0/校外1:</label>
                 <input type="text" id="type" name="type" value="<?php echo isset($type1) ? $type1: ''; ?>">
 

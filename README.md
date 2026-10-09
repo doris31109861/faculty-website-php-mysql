@@ -25,7 +25,7 @@
 | `experience` | 經歷 |
 | `time` | 課表／Office hour |
 
-- 寫入資料庫前以 `mysqli_real_escape_string` 處理使用者輸入
+- **防 SQL injection**：所有含使用者輸入的 SQL 都改用 prepared statement（`db.php` 的 `db_run()`，`?` 佔位符＋`bind_param`），查詢結果輸出到 HTML 前以 `htmlspecialchars` 跳脫
 
 ### 安裝與執行
 
@@ -41,6 +41,7 @@ index.php            # 前台
 enter.php            # 後台登入頁
 login.php / logout.php  # 登入驗證（password_verify + session）／登出
 auth.php             # 後台頁面共用的登入檢查
+db.php               # prepared statement 共用函式 db_run()、HTML 跳脫 h()
 schema.sql           # 建表語法（6 張內容表＋admin）
 tools/create_admin.php  # 建立管理員帳號（命令列）
 background.php       # 後台首頁
@@ -65,7 +66,7 @@ A rebuild of a CSIE professor's profile website, backed by MySQL, with an admin 
 - **Public site** (`index.php`): renders papers, books, awards, research projects, experience and schedule from the database
 - **Admin login** (`enter.php` → `login.php`): credentials live in an `admin` table with `password_hash()` hashes; a PHP session marks the user as logged in, every admin page starts with `require auth.php` and redirects to the login page otherwise; `logout.php` ends the session
 - **Admin back-end** (`bg_php/`): full CRUD for 6 tables (`paper`, `book`, `award`, `plan`, `experience`, `time`)
-- User input is escaped with `mysqli_real_escape_string` before it is written to the database
+- **SQL-injection safe**: every query that takes user input uses a prepared statement (`db_run()` in `db.php`, `?` placeholders + `bind_param`); query results are HTML-escaped before output
 
 ### Setup
 

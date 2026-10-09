@@ -1,16 +1,16 @@
-<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php require_once __DIR__ . '/../../db.php'; ?><?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
             
-        $name = mysqli_real_escape_string($link, $_POST["name"]);
-        $year = mysqli_real_escape_string($link, $_POST["year"]);
-        $uint = mysqli_real_escape_string($link, $_POST["uint"]);
-        $date = mysqli_real_escape_string($link, $_POST["date"]);
-        $award = mysqli_real_escape_string($link, $_POST["award"]);
-        $type = mysqli_real_escape_string($link, $_POST["type"]);
-        $sql = "INSERT INTO AWARD (Year,Name,Uint,Date,Award,Type) VALUES ('$year', '$name', '$uint','$date','$award','$type')";
+        $name = ($_POST["name"] ?? '');
+        $year = ($_POST["year"] ?? '');
+        $uint = ($_POST["uint"] ?? '');
+        $date = ($_POST["date"] ?? '');
+        $award = ($_POST["award"] ?? '');
+        $type = ($_POST["type"] ?? '');
+        $sql = "INSERT INTO AWARD (Year,Name,Uint,Date,Award,Type) VALUES (?, ?, ?,?,?,?)";  // ? 為佔位符，實際的值由 db_run 綁定
         try {
-            $result = mysqli_query($link, $sql);
+            $result = db_run($link, $sql, [$year, $name, $uint, $date, $award, $type]);
             echo "插入成功<br>";
             
             // 重定向到 bg_time.php 页面

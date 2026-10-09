@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><!DOCTYPE html>
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php require_once __DIR__ . '/../../db.php'; ?><!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -76,10 +76,10 @@
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-                $name1 = mysqli_real_escape_string($link, $_POST["name1"]);
-                $award1 = mysqli_real_escape_string($link, $_POST["award1"]);
-                $sql = "SELECT * FROM AWARD WHERE Name='$name1' AND Award='$award1'";
-                $result = mysqli_query($link, $sql);
+                $name1 = ($_POST["name1"] ?? '');
+                $award1 = ($_POST["award1"] ?? '');
+                $sql = "SELECT * FROM AWARD WHERE Name=? AND Award=?";  // ? 為佔位符，實際的值由 db_run 綁定
+                $result = db_run($link, $sql, [$name1, $award1]);
 
                 if (mysqli_num_rows($result) > 0) {
                     echo "<table>";
@@ -94,12 +94,12 @@
 
                     while ($row = mysqli_fetch_array($result)) {
                         echo "<tr>";
-                        echo "<td>" . $row["Year"] . "</td>";
-                        echo "<td>" . $row["Name"] . "</td>";
-                        echo "<td>" . $row["Uint"] . "</td>";
-                        echo "<td>" . $row["Date"] . "</td>";
-                        echo "<td>" . $row["Award"] . "</td>";
-                        echo "<td>" . $row["Type"] . "</td>";
+                        echo "<td>" . h($row["Year"]) . "</td>";
+                        echo "<td>" . h($row["Name"]) . "</td>";
+                        echo "<td>" . h($row["Uint"]) . "</td>";
+                        echo "<td>" . h($row["Date"]) . "</td>";
+                        echo "<td>" . h($row["Award"]) . "</td>";
+                        echo "<td>" . h($row["Type"]) . "</td>";
                         echo "</tr>";
                         $year1 = $row["Year"] ;
                         $uint1 = $row["Uint"] ;
@@ -117,25 +117,25 @@
             ?>
 
             <form action="update_award.php" method="post">
-                <input type="hidden" id="name1" name="name1" value="<?php echo isset($name1) ? $name1 : ''; ?>">
-                <input type="hidden" id="award1" name="award1" value="<?php echo isset($award1) ? $award1 : ''; ?>">
+                <input type="hidden" id="name1" name="name1" value="<?php echo isset($name1) ? h($name1) : ''; ?>">
+                <input type="hidden" id="award1" name="award1" value="<?php echo isset($award1) ? h($award1) : ''; ?>">
                 <label for="year">修改後年度:</label>
-                <input type="text" id="year" name="year" value="<?php echo isset($year1) ? $year1 : ''; ?>">    
+                <input type="text" id="year" name="year" value="<?php echo isset($year1) ? h($year1) : ''; ?>">    
                 
                 <label for="name">修改後名稱:</label>
-                <input type="text" id="name" name="name" value="<?php echo isset($name1) ? $name1 : ''; ?>">
+                <input type="text" id="name" name="name" value="<?php echo isset($name1) ? h($name1) : ''; ?>">
 
                 <label for="date">修改後日期:</label>
-                <input type="text" id="date" name="date" value="<?php echo isset($date1) ? $date1 : ''; ?>">
+                <input type="text" id="date" name="date" value="<?php echo isset($date1) ? h($date1) : ''; ?>">
 
                 <label for="uint">修改後單位:</label>
-                <input type="text" id="uint" name="uint" value="<?php echo isset($uint1) ? $uint1 : ''; ?>">
+                <input type="text" id="uint" name="uint" value="<?php echo isset($uint1) ? h($uint1) : ''; ?>">
 
                 <label for="award">修改後獎項:</label>
-                <input type="text" id="award" name="award" value="<?php echo isset($award1) ? $award1 : ''; ?>">
+                <input type="text" id="award" name="award" value="<?php echo isset($award1) ? h($award1) : ''; ?>">
 
                 <label for="type">修改後類型 校內0/校外1:</label>
-                <input type="text" id="type" name="type" value="<?php echo isset($type1) ? $type1 : ''; ?>">
+                <input type="text" id="type" name="type" value="<?php echo isset($type1) ? h($type1) : ''; ?>">
 
                 <input type="submit" value="Update">
             </form>

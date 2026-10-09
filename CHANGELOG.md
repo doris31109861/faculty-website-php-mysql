@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-09 — SQL 改用 prepared statements
+
+- **內容**：新增 `db.php`（`db_run($link, $sql, $params)`：`mysqli_prepare` + `bind_param` + `execute`；`h()`：HTML 跳脫）。`bg_php/` 下 24 個新增／查詢／修改／刪除頁面的 SQL 全部改成 `?` 佔位符，移除 `mysqli_real_escape_string` 字串拼接；查詢頁輸出資料時加上 `h()` 防 XSS。`insert_plan.php` 原本 Role 值前面多一個空白（`' $role'`），改用佔位符後一併修正。
+- **原因**：字串拼接 SQL 即使有 escape 仍不是最佳做法，prepared statement 讓資料永遠不會被當成 SQL 執行。
+- **測試**：此電腦沒有 PHP／MySQL，**未實際執行**；轉換以腳本完成，已逐檔確認佔位符數量與綁定參數數量、順序一致（前台 `index.php` 的查詢不含使用者輸入，維持原樣）。
+
 ## 2026-10-09 — 補上完整建表語法 schema.sql
 
 - **內容**：`schema.sql` 加入 6 張內容表（TIME、EXPERIENCE、PAPER、BOOK、PLAN、AWARD），欄位依程式中的 INSERT / UPDATE / SELECT 反推；每張表加自動遞增 `id` 主鍵；README 安裝步驟改為直接匯入 `schema.sql`。

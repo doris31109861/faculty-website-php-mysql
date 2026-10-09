@@ -1,16 +1,16 @@
-<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php
+<?php require_once __DIR__ . '/../../auth.php'; // 後台頁面：未登入導回登入頁 ?><?php require_once __DIR__ . '/../../config.php'; ?><?php require_once __DIR__ . '/../../db.php'; ?><?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $link = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        $name = mysqli_real_escape_string($link, $_POST["name"]);
-        $press = mysqli_real_escape_string($link, $_POST["press"]);
-        $type = mysqli_real_escape_string($link, $_POST["type"]);
-        $nation = mysqli_real_escape_string($link, $_POST["nation"]);
-        $date = mysqli_real_escape_string($link, $_POST["date"]);
-        $teacher = mysqli_real_escape_string($link, $_POST["teacher"]);
+        $name = ($_POST["name"] ?? '');
+        $press = ($_POST["press"] ?? '');
+        $type = ($_POST["type"] ?? '');
+        $nation = ($_POST["nation"] ?? '');
+        $date = ($_POST["date"] ?? '');
+        $teacher = ($_POST["teacher"] ?? '');
         
-        $sql = "INSERT INTO BOOK (Name,Press,Type,Nation,Date,Teacher) VALUES ('$name', '$press', '$type','$nation','$date','$teacher')";
+        $sql = "INSERT INTO BOOK (Name,Press,Type,Nation,Date,Teacher) VALUES (?, ?, ?,?,?,?)";  // ? 為佔位符，實際的值由 db_run 綁定
         try {
-            $result = mysqli_query($link, $sql);
+            $result = db_run($link, $sql, [$name, $press, $type, $nation, $date, $teacher]);
             echo "插入成功owob<br>";
             
             // 重定向到 bg_time.php 页面
