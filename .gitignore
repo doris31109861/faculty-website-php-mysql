@@ -1,0 +1,7 @@
+config.php
+*.mp4
+*.exe
+*.o
+*.out
+.vscode/
+.idea/
