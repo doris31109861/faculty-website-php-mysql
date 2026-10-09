@@ -1,0 +1,53 @@
+# 在 CI 中架起 PHP + MySQL，實際操作網站驗證登入保護與後台 CRUD
+# 這裡的帳號密碼只用在 CI 臨時建立、跑完即銷毀的測試資料庫
+name: integration-test
+
+on: [push, workflow_dispatch]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: faculty
+        ports: ["3306:3306"]
+        options: --health-cmd="mysqladmin ping -proot" --health-interval=5s --health-retries=20
+    env:
+      DB_ROOT_PASS: root
+      DB_NAME: faculty
+      ADMIN_USER: admin
+      ADMIN_PASS: ci-only-test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mysqli
+
+      - name: PHP syntax check
+        run: find . -name "*.php" -print0 | xargs -0 -n1 php -l > /dev/null
+
+      - name: Set up database and config
+        run: |
+          mysql -h 127.0.0.1 -u root -p"$DB_ROOT_PASS" "$DB_NAME" < schema.sql
+          sed -e "s/'localhost'/'127.0.0.1'/" -e "s/'your_user'/'root'/" \
+              -e "s/'your_password'/'$DB_ROOT_PASS'/" -e "s/'your_database'/'$DB_NAME'/" \
+              config.example.php > config.php
+          php tools/create_admin.php "$ADMIN_USER" "$ADMIN_PASS"
+
+      # output_buffering 與 XAMPP 預設的 php.ini 相同（頁面先 echo 再 header 轉址也能運作）
+      - name: Start PHP server
+        run: |
+          php -d output_buffering=4096 -S 127.0.0.1:8000 > php-server.log 2>&1 &
+          sleep 2
+
+      - name: Run integration test
+        run: bash tests/integration_test.sh
+
+      - name: PHP server log
+        if: always()
+        run: cat php-server.log

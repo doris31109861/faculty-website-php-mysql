@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-09 — 加入 PHP + MySQL 整合測試（GitHub Actions）
+
+- **內容**：新增 `tests/integration_test.sh` 與 `.github/workflows/integration.yml`：CI 啟動 MySQL 8 與 PHP 8.2，匯入 `schema.sql`、建立測試管理員，再用 curl 實際操作網站：未登入被導回、錯誤密碼被拒、正確密碼登入、新增含單引號與 SQL 片段的資料、查詢頁輸出跳脫、修改、前台顯示、刪除、其餘 5 張表各新增一筆、登出後後台受保護；另對所有 `.php` 做 `php -l` 語法檢查。
+- **原因**：此電腦沒有 PHP／MySQL，先前的登入、schema、prepared statement 修改都還沒實際執行過。
+- **測試**：結果見下一筆紀錄。
+
 ## 2026-10-09 — README 加入操作畫面 GIF
 
 - **內容**：從期末專題錄影（2023-05-29）擷取前台各區塊與後台時間表維護畫面，做成 `docs/demo.gif`（800px、8fps、約 450KB），放在 README 開頭。已裁掉瀏覽器網址列與工作列，並避開顯示學校伺服器 IP 與登入帳號的片段。
