@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-09 — README 註明以 AI 協助
+
+- **內容**：README 開頭加上說明：2026/10 的整理、測試與改進是以 AI（Claude）協助完成，逐項紀錄見本檔。
+- **原因**：讓看 repo 的人清楚知道哪些部分是後來以 AI 協助完成的，與原本的作業區分。
+- **測試**：只改文件。
+
 ## 2026-10-09 — Docker Compose 一鍵啟動
 
 - **內容**：新增 `Dockerfile`（PHP 8.2 + Apache + mysqli）、`docker-compose.yml`（web + MySQL 8，第一次啟動自動匯入 `schema.sql`）、`docker/config.docker.php`（從環境變數讀資料庫設定）、`.dockerignore`；README 加上使用方式。CI 新增 docker-compose 工作：啟動整套服務、建立管理員、確認首頁 200 與登入成功。
