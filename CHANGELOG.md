@@ -4,7 +4,7 @@
 
 - **內容**：新增 `Dockerfile`（PHP 8.2 + Apache + mysqli）、`docker-compose.yml`（web + MySQL 8，第一次啟動自動匯入 `schema.sql`）、`docker/config.docker.php`（從環境變數讀資料庫設定）、`.dockerignore`；README 加上使用方式。CI 新增 docker-compose 工作：啟動整套服務、建立管理員、確認首頁 200 與登入成功。
 - **原因**：不用另外安裝 XAMPP 也能跑起來。
-- **測試**：由 CI 驗證（見下一筆紀錄）。
+- **測試**：CI 實測 `docker compose up --build --wait` 成功，建立管理員後首頁回應 200、登入轉址到 background.php。
 
 ## 2026-10-09 — 新增／修改／刪除抽成共用函式
 
